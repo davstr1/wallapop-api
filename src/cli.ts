@@ -5,6 +5,7 @@ import {
   curlSearch, curlItem, curlUser, curlUserStats,
   curlUserItems, curlCategories, curlInbox, curlExtractItemId,
 } from './curl';
+import { generateCurlMd } from './curl-md';
 
 const USAGE = `
 Usage: wallapop <command> [options]
@@ -18,6 +19,7 @@ Commands:
   user-items <userId>        Get user items
   categories                 List all categories
   inbox <bearerToken>        Get messaging inbox (auth required)
+  curl-md                    Generate curl cheatsheet (markdown)
   serve                      Start HTTP server
 
 Search options:
@@ -85,6 +87,18 @@ async function main() {
   if (command === 'help' || command === '--help' || flags.help === 'true') {
     console.log(USAGE);
     process.exit(0);
+  }
+
+  if (command === 'curl-md') {
+    const md = generateCurlMd();
+    if (args[0]) {
+      const fs = await import('fs');
+      fs.writeFileSync(args[0], md);
+      console.log(`✅ Written to ${args[0]}`);
+    } else {
+      console.log(md);
+    }
+    return;
   }
 
   if (command === 'serve') {
