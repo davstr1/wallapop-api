@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 
 import { WallapopClient } from './client';
+import {
+  curlSearch, curlItem, curlUser, curlUserStats,
+  curlUserItems, curlCategories, curlInbox, curlExtractItemId,
+} from './curl';
 
 const USAGE = `
 Usage: wallapop <command> [options]
@@ -29,16 +33,15 @@ Search options:
   --next-page <token>        Pagination token
 
 General:
+  --curl                     Print the curl command instead of executing
   --json                     Raw JSON output (default: formatted)
   --help                     Show this help
 
 Examples:
   wallapop search "iphone 13" --min-price 200 --max-price 500
-  wallapop search "bike" --lat 41.38 --lon 2.17 --distance 5000
-  wallapop search --next-page "eyJhbGci..."
-  wallapop item nz047v45rrjo
-  wallapop user-stats qjwy4weydwzo
-  wallapop categories
+  wallapop search "bike" --curl
+  wallapop item nz047v45rrjo --curl
+  wallapop categories --curl
   wallapop serve
 `;
 
@@ -77,6 +80,7 @@ function output(data: unknown, raw: boolean) {
 async function main() {
   const { command, args, flags } = parseArgs(process.argv.slice(2));
   const raw = flags.json === 'true';
+  const curlMode = flags.curl === 'true';
 
   if (command === 'help' || command === '--help' || flags.help === 'true') {
     console.log(USAGE);
@@ -84,7 +88,6 @@ async function main() {
   }
 
   if (command === 'serve') {
-    // Dynamic import to avoid loading express for CLI commands
     const { createApp } = await import('./server');
     const { config } = await import('./config');
     const port = flags.port ? parseInt(flags.port) : config.port;
@@ -95,6 +98,67 @@ async function main() {
     });
     return;
   }
+
+  // ── Curl mode: just print the command ─────────────────
+
+  if (curlMode) {
+    switch (command) {
+      case 'search':
+        console.log(curlSearch({
+          keywords: args[0],
+          min_sale_price: flags['min-price'] ? Number(flags['min-price']) : undefined,
+          max_sale_price: flags['max-price'] ? Number(flags['max-price']) : undefined,
+          latitude: flags.lat ? Number(flags.lat) : undefined,
+          longitude: flags.lon ? Number(flags.lon) : undefined,
+          distance: flags.distance ? Number(flags.distance) : undefined,
+          category_id: flags.category ? Number(flags.category) : undefined,
+          subcategory_ids: flags.subcategories,
+          order_by: flags.order,
+          limit: flags.limit ? Number(flags.limit) : undefined,
+          next_page: flags['next-page'],
+        }));
+        break;
+      case 'item':
+        if (!args[0]) { console.error('Error: item ID required'); process.exit(1); }
+        console.log(curlItem(args[0]));
+        break;
+      case 'item-id':
+        if (!args[0]) { console.error('Error: URL required'); process.exit(1); }
+        console.log(curlExtractItemId(args[0]));
+        break;
+      case 'user':
+        if (!args[0]) { console.error('Error: user ID required'); process.exit(1); }
+        console.log(curlUser(args[0]));
+        break;
+      case 'user-stats':
+        if (!args[0]) { console.error('Error: user ID required'); process.exit(1); }
+        console.log(curlUserStats(args[0]));
+        break;
+      case 'user-items':
+        if (!args[0]) { console.error('Error: user ID required'); process.exit(1); }
+        console.log(curlUserItems(args[0], {
+          limit: flags.limit ? Number(flags.limit) : undefined,
+          next_page: flags['next-page'],
+        }));
+        break;
+      case 'categories':
+        console.log(curlCategories());
+        break;
+      case 'inbox':
+        if (!args[0]) { console.error('Error: bearer token required'); process.exit(1); }
+        console.log(curlInbox(args[0], {
+          pageSize: flags['page-size'] ? Number(flags['page-size']) : undefined,
+          maxMessages: flags['max-messages'] ? Number(flags['max-messages']) : undefined,
+        }));
+        break;
+      default:
+        console.error(`Unknown command: ${command}`);
+        process.exit(1);
+    }
+    return;
+  }
+
+  // ── Execute mode: call the API ────────────────────────
 
   const client = new WallapopClient();
 
@@ -120,55 +184,48 @@ async function main() {
 
       case 'item': {
         if (!args[0]) { console.error('Error: item ID required'); process.exit(1); }
-        const data = await client.getItem(args[0]);
-        output(data, raw);
+        output(await client.getItem(args[0]), raw);
         break;
       }
 
       case 'item-id': {
         if (!args[0]) { console.error('Error: URL required'); process.exit(1); }
-        const id = await client.extractItemId(args[0]);
-        output({ itemId: id }, raw);
+        output({ itemId: await client.extractItemId(args[0]) }, raw);
         break;
       }
 
       case 'user': {
         if (!args[0]) { console.error('Error: user ID required'); process.exit(1); }
-        const data = await client.getUser(args[0]);
-        output(data, raw);
+        output(await client.getUser(args[0]), raw);
         break;
       }
 
       case 'user-stats': {
         if (!args[0]) { console.error('Error: user ID required'); process.exit(1); }
-        const data = await client.getUserStats(args[0]);
-        output(data, raw);
+        output(await client.getUserStats(args[0]), raw);
         break;
       }
 
       case 'user-items': {
         if (!args[0]) { console.error('Error: user ID required'); process.exit(1); }
-        const data = await client.getUserItems(args[0], {
+        output(await client.getUserItems(args[0], {
           limit: flags.limit ? Number(flags.limit) : undefined,
           next_page: flags['next-page'],
-        });
-        output(data, raw);
+        }), raw);
         break;
       }
 
       case 'categories': {
-        const data = await client.getCategories();
-        output(data, raw);
+        output(await client.getCategories(), raw);
         break;
       }
 
       case 'inbox': {
         if (!args[0]) { console.error('Error: bearer token required'); process.exit(1); }
-        const data = await client.getInbox(args[0], {
+        output(await client.getInbox(args[0], {
           pageSize: flags['page-size'] ? Number(flags['page-size']) : undefined,
           maxMessages: flags['max-messages'] ? Number(flags['max-messages']) : undefined,
-        });
-        output(data, raw);
+        }), raw);
         break;
       }
 
