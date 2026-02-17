@@ -422,6 +422,9 @@ document.getElementById('item-lookup-btn').addEventListener('click', async () =>
           <dt>Reserved</dt><dd>${item.reserved?.flag ? 'Yes' : 'No'}</dd>
           <dt>Sold</dt><dd>${item.sold?.flag ? 'Yes' : 'No'}</dd>
           <dt>Created</dt><dd>${item.creation_date ? new Date(item.creation_date * 1000).toLocaleDateString() : '?'}</dd>
+          <dt>Views</dt><dd>${item.counters?.views ?? '?'}</dd>
+          <dt>Favorites</dt><dd>${item.counters?.favorites ?? '?'}</dd>
+          <dt>Conversations</dt><dd>${item.counters?.conversations ?? '?'}</dd>
         </dl>
         ${desc ? `<p style="margin-top:var(--space-4);color:var(--text-secondary);font-size:13px">${esc(desc)}</p>` : ''}
       </div>`;

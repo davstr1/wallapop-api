@@ -14,6 +14,7 @@ Usage: wallapop <command> [options]
 Commands:
   search <keywords>          Search items
   item <itemId>              Get item details
+  item-counters <itemId>     Get item views, favorites, conversations
   item-id <url>              Extract item ID from URL
   user <userId>              Get user profile
   user-stats <userId>        Get user stats
@@ -138,6 +139,10 @@ async function main() {
         if (!args[0]) { console.error('Error: item ID required'); process.exit(1); }
         console.log(curlItem(args[0]));
         break;
+      case 'item-counters':
+        if (!args[0]) { console.error('Error: item ID required'); process.exit(1); }
+        console.log(curlItem(args[0]) + " | python3 -c \"import sys,json; d=json.loads(sys.stdin.read()); print(json.dumps(d.get('counters',{}), indent=2))\"");
+        break;
       case 'item-id':
         if (!args[0]) { console.error('Error: URL required'); process.exit(1); }
         console.log(curlExtractItemId(args[0]));
@@ -207,6 +212,13 @@ async function main() {
       case 'item': {
         if (!args[0]) { console.error('Error: item ID required'); process.exit(1); }
         output(await client.getItem(args[0]), raw);
+        break;
+      }
+
+      case 'item-counters': {
+        if (!args[0]) { console.error('Error: item ID required'); process.exit(1); }
+        const details = await client.getItem(args[0]);
+        output(details.counters ?? { views: 0, favorites: 0, conversations: 0 }, raw);
         break;
       }
 

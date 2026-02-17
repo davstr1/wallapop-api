@@ -63,6 +63,12 @@ export interface SearchResponse {
 
 // ── Item Details ────────────────────────────────────────
 
+export interface ItemCounters {
+  views: number;
+  favorites: number;
+  conversations: number;
+}
+
 export interface ItemDetails {
   id: string;
   title: { original: string } | string;
@@ -96,6 +102,7 @@ export interface ItemDetails {
     bumped: boolean;
     highlighted: boolean;
   };
+  counters?: ItemCounters;
 }
 
 // ── User ────────────────────────────────────────────────

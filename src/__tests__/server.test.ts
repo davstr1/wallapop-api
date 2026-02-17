@@ -96,6 +96,29 @@ describe('API Server', () => {
     });
   });
 
+  // ── Item Counters ──────────────────────────────────────
+
+  describe('GET /api/v1/items/:itemId/counters', () => {
+    it('should return counters from item details', async () => {
+      const mockItem = { id: 'abc', counters: { views: 486, favorites: 50, conversations: 8 } };
+      mockClient.getItem = jest.fn().mockResolvedValue(mockItem);
+
+      const res = await request(app).get('/api/v1/items/abc/counters');
+
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual({ views: 486, favorites: 50, conversations: 8 });
+    });
+
+    it('should return zeros when no counters', async () => {
+      mockClient.getItem = jest.fn().mockResolvedValue({ id: 'abc' });
+
+      const res = await request(app).get('/api/v1/items/abc/counters');
+
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual({ views: 0, favorites: 0, conversations: 0 });
+    });
+  });
+
   // ── Extract Item ID ───────────────────────────────────
 
   describe('GET /api/v1/itemId', () => {

@@ -67,6 +67,17 @@ export function createApp(client?: WallapopClient) {
     }
   });
 
+  // ── Item Counters (views, favorites, conversations) ────
+
+  app.get('/api/v1/items/:itemId/counters', async (req, res, next) => {
+    try {
+      const data = await wallapop.getItem(req.params.itemId);
+      res.json(data.counters ?? { views: 0, favorites: 0, conversations: 0 });
+    } catch (err) {
+      next(err);
+    }
+  });
+
   // ── Extract Item ID from URL ──────────────────────────
 
   app.get('/api/v1/itemId', async (req, res, next) => {
