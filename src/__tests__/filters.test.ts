@@ -90,6 +90,28 @@ describe('isInContinentalSpain()', () => {
   it('should handle postal code with spaces', () => {
     expect(isInContinentalSpain({ location: { postal_code: ' 08001 ' } })).toBe(true);
   });
+
+  // ── Country code filtering ────────────────────────────
+
+  it('should reject Portugal via country_code', () => {
+    expect(isInContinentalSpain({ location: { country_code: 'PT', city: 'Lisboa', postal_code: '1000', latitude: 38.72, longitude: -9.14 } })).toBe(false);
+  });
+
+  it('should reject Italy via country_code', () => {
+    expect(isInContinentalSpain({ location: { country_code: 'IT', city: 'Roma', postal_code: '00100', latitude: 41.90, longitude: 12.49 } })).toBe(false);
+  });
+
+  it('should reject France via country_code', () => {
+    expect(isInContinentalSpain({ location: { country_code: 'FR', city: 'Perpignan', postal_code: '66000', latitude: 42.69, longitude: 2.90 } })).toBe(false);
+  });
+
+  it('should accept Spain with country_code ES', () => {
+    expect(isInContinentalSpain({ location: { country_code: 'ES', postal_code: '08001', city: 'Barcelona' } })).toBe(true);
+  });
+
+  it('should still reject Canarias even with country_code ES', () => {
+    expect(isInContinentalSpain({ location: { country_code: 'ES', postal_code: '35001', city: 'Las Palmas' } })).toBe(false);
+  });
 });
 
 describe('filterContinentalSpain()', () => {

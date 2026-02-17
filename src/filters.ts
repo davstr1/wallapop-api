@@ -28,18 +28,24 @@ export interface Locatable {
     city?: string;
     latitude?: number;
     longitude?: number;
+    country_code?: string;
   };
 }
 
 /**
  * Check if an item is in continental Spain.
- * Uses postal code first (reliable), falls back to coordinates.
+ * Priority: country_code → postal code → bounding box.
+ * Rejects Portugal, Italy, France, etc. via country_code.
+ * Rejects Canarias, Baleares, Ceuta, Melilla via postal code.
  */
 export function isInContinentalSpain(item: Locatable): boolean {
   const loc = item.location;
   if (!loc) return false;
 
-  // Postal code check (most reliable)
+  // Country code check — reject anything that's not Spain
+  if (loc.country_code && loc.country_code !== 'ES') return false;
+
+  // Postal code check (most reliable for islands/enclaves)
   const postal = loc.postal_code?.trim();
   if (postal && postal.length >= 2) {
     const prefix = postal.slice(0, 2);
