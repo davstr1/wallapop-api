@@ -1,3 +1,4 @@
+import path from 'path';
 import express from 'express';
 import cors from 'cors';
 import { WallapopClient } from './client';
@@ -10,6 +11,7 @@ export function createApp(client?: WallapopClient) {
 
   app.use(cors());
   app.use(express.json());
+  app.use(express.static(path.join(__dirname, '../public')));
 
   // ── Health ────────────────────────────────────────────
 

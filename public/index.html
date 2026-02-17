@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wallapop API</title>
+  <style>
+    /* === Tokens === */
+    :root {
+      --surface-primary: #09090b;
+      --surface-secondary: #111113;
+      --surface-tertiary: #1a1a1c;
+      --text-primary: #fafafa;
+      --text-secondary: #a1a1aa;
+      --text-muted: #52525b;
+      --border-default: rgba(255,255,255,0.10);
+      --border-subtle: rgba(255,255,255,0.06);
+      --border-strong: rgba(255,255,255,0.20);
+      --accent: #6366f1;
+      --accent-hover: #818cf8;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #3b82f6;
+      --radius-card: 14px;
+      --radius-button: 10px;
+      --radius-input: 8px;
+      --radius-pill: 9999px;
+      --shadow-card: 0px 1px 0px 0px rgba(255,255,255,0.10) inset, 0px 30px 50px rgba(0,0,0,0.40);
+      --shadow-subtle: 0 28px 70px rgba(0,0,0,0.14), 0 14px 32px rgba(0,0,0,0.08);
+      --shadow-glow: 0 0 40px 10px hsla(249,91%,77%,0.1);
+      --space-xs: 4px;
+      --space-sm: 8px;
+      --space-md: 16px;
+      --space-lg: 24px;
+      --space-xl: 32px;
+      --space-2xl: 48px;
+      --space-3xl: 64px;
+      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', monospace;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --surface-primary: #ffffff;
+        --surface-secondary: #f4f4f5;
+        --surface-tertiary: #e4e4e7;
+        --text-primary: #09090b;
+        --text-secondary: #52525b;
+        --text-muted: #a1a1aa;
+        --border-default: rgba(0,0,0,0.10);
+        --border-subtle: rgba(0,0,0,0.06);
+        --border-strong: rgba(0,0,0,0.20);
+        --shadow-card: 0px 1px 0px 0px rgba(0,0,0,0.05) inset, 0px 20px 40px rgba(0,0,0,0.08);
+        --shadow-subtle: 0 10px 30px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+        --shadow-glow: 0 0 40px 10px hsla(249,91%,77%,0.08);
+      }
+    }
+
+    /* === Resets === */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--surface-primary);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--surface-primary); }
+    ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: var(--radius-pill); }
+
+    /* === Layout === */
+    .page { max-width: 1120px; margin: 0 auto; padding: var(--space-lg); }
+
+    /* === Nav === */
+    nav {
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(9,9,11,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: var(--space-md) var(--space-lg);
+      display: flex; align-items: center; gap: var(--space-md);
+    }
+    @media (prefers-color-scheme: light) {
+      nav { background: rgba(255,255,255,0.85); }
+    }
+    nav h1 { font-size: 18px; font-weight: 700; }
+    nav .tag {
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+      color: var(--accent); background: rgba(99,102,241,0.12);
+      padding: 2px 8px; border-radius: var(--radius-pill);
+    }
+
+    /* === Search bar === */
+    .search-bar {
+      background: var(--surface-secondary);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-card);
+      padding: var(--space-lg);
+      display: flex; flex-direction: column; gap: var(--space-md);
+      margin-bottom: var(--space-xl);
+    }
+    .search-row {
+      display: flex; gap: var(--space-sm); flex-wrap: wrap;
+    }
+    .search-row input, .search-row select {
+      background: var(--surface-tertiary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-input);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      padding: var(--space-sm) 12px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .search-row input:focus, .search-row select:focus {
+      border-color: var(--accent);
+    }
+    .search-row input::placeholder { color: var(--text-muted); }
+    .search-row .input-keywords { flex: 1; min-width: 200px; }
+    .search-row .input-sm { width: 110px; }
+    .search-row .input-md { width: 140px; }
+
+    /* === Buttons === */
+    button {
+      font-family: var(--font-sans);
+      font-size: 14px; font-weight: 600;
+      cursor: pointer; border: none;
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-button);
+      transition: background 0.15s, box-shadow 0.15s;
+    }
+    .btn-primary {
+      background: var(--accent); color: #fff;
+    }
+    .btn-primary:hover { background: var(--accent-hover); box-shadow: var(--shadow-glow); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-secondary {
+      background: var(--surface-tertiary); color: var(--text-primary);
+      border: 1px solid var(--border-default);
+    }
+    .btn-secondary:hover { border-color: var(--border-strong); }
+
+    /* === Tabs === */
+    .tabs {
+      display: flex; gap: var(--space-xs);
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: var(--space-lg);
+      overflow-x: auto;
+    }
+    .tab {
+      background: none; color: var(--text-secondary);
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-button) var(--radius-button) 0 0;
+      border: none; border-bottom: 2px solid transparent;
+      white-space: nowrap;
+    }
+    .tab:hover { color: var(--text-primary); }
+    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* === Results grid === */
+    .results { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-lg); }
+
+    /* === Item card === */
+    .card {
+      background: var(--surface-secondary);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+    }
+    .card:hover { box-shadow: var(--shadow-card), var(--shadow-glow); }
+    .card img {
+      width: 100%; height: 200px; object-fit: cover;
+      background: var(--surface-tertiary);
+    }
+    .card-body { padding: var(--space-md); display: flex; flex-direction: column; gap: var(--space-sm); }
+    .card-title {
+      font-size: 14px; font-weight: 600;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .card-price { font-size: 18px; font-weight: 700; color: var(--accent); }
+    .card-meta { font-size: 12px; color: var(--text-muted); display: flex; gap: var(--space-sm); flex-wrap: wrap; }
+    .card-meta span { display: flex; align-items: center; gap: var(--space-xs); }
+
+    /* === Badges === */
+    .badge {
+      display: inline-block; font-size: 11px; font-weight: 600;
+      padding: 2px 8px; border-radius: var(--radius-pill);
+    }
+    .badge-shipping { background: rgba(34,197,94,0.12); color: var(--success); }
+    .badge-reserved { background: rgba(245,158,11,0.12); color: var(--warning); }
+
+    /* === Status bar === */
+    .status-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: var(--space-sm) 0;
+      margin-bottom: var(--space-md);
+      color: var(--text-secondary); font-size: 13px;
+    }
+    .status-bar .count { font-weight: 600; color: var(--text-primary); }
+
+    /* === Load more === */
+    .load-more {
+      display: flex; justify-content: center;
+      padding: var(--space-xl) 0;
+    }
+
+    /* === Panels (item detail, user) === */
+    .panel {
+      background: var(--surface-secondary);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-card);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-lg);
+    }
+    .panel h2 { font-size: 20px; font-weight: 700; margin-bottom: var(--space-md); }
+    .panel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm); }
+    .panel-grid dt { font-size: 12px; color: var(--text-muted); }
+    .panel-grid dd { font-size: 14px; font-weight: 500; margin-bottom: var(--space-sm); }
+
+    /* === Lookup form === */
+    .lookup {
+      display: flex; gap: var(--space-sm); margin-bottom: var(--space-lg);
+    }
+    .lookup input { flex: 1; }
+
+    /* === Loading / empty === */
+    .spinner {
+      width: 24px; height: 24px;
+      border: 3px solid var(--border-default);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading, .empty {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: var(--space-md); padding: var(--space-3xl) 0;
+      color: var(--text-muted); font-size: 14px;
+    }
+
+    /* === Hidden === */
+    [hidden] { display: none !important; }
+
+    /* === Responsive === */
+    @media (max-width: 640px) {
+      .search-row { flex-direction: column; }
+      .search-row .input-sm, .search-row .input-md { width: 100%; }
+      .results { grid-template-columns: 1fr; }
+      .panel-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <h1>Wallapop API</h1>
+  <span class="tag">Unofficial</span>
+</nav>
+
+<main class="page">
+
+  <!-- Tabs -->
+  <div class="tabs" role="tablist">
+    <button class="tab active" role="tab" data-tab="search" aria-selected="true">Search</button>
+    <button class="tab" role="tab" data-tab="item">Item Lookup</button>
+    <button class="tab" role="tab" data-tab="user">User Lookup</button>
+    <button class="tab" role="tab" data-tab="categories">Categories</button>
+  </div>
+
+  <!-- ═══ SEARCH TAB ═══ -->
+  <section id="tab-search">
+    <form class="search-bar" id="search-form">
+      <div class="search-row">
+        <input type="text" name="keywords" class="input-keywords" placeholder="Search Wallapop..." autocomplete="off">
+        <button type="submit" class="btn-primary">Search</button>
+      </div>
+      <div class="search-row">
+        <input type="number" name="min_sale_price" class="input-sm" placeholder="Min price">
+        <input type="number" name="max_sale_price" class="input-sm" placeholder="Max price">
+        <input type="number" name="latitude" class="input-md" placeholder="Latitude" step="any">
+        <input type="number" name="longitude" class="input-md" placeholder="Longitude" step="any">
+        <input type="number" name="distance" class="input-sm" placeholder="Dist (m)">
+        <select name="order_by" class="input-md">
+          <option value="newest">Newest</option>
+          <option value="price_low_to_high">Price: low to high</option>
+          <option value="price_high_to_low">Price: high to low</option>
+          <option value="distance">Distance</option>
+        </select>
+      </div>
+    </form>
+
+    <div class="status-bar" id="search-status" hidden>
+      <span><span class="count" id="result-count">0</span> results</span>
+    </div>
+
+    <div id="search-loading" class="loading" hidden>
+      <div class="spinner"></div>
+      <span>Searching...</span>
+    </div>
+
+    <div id="search-empty" class="empty" hidden>
+      <span>No results found</span>
+    </div>
+
+    <div class="results" id="search-results"></div>
+
+    <div class="load-more" id="load-more" hidden>
+      <button class="btn-secondary" id="load-more-btn">Load more</button>
+    </div>
+  </section>
+
+  <!-- ═══ ITEM TAB ═══ -->
+  <section id="tab-item" hidden>
+    <div class="lookup">
+      <input type="text" id="item-id-input" placeholder="Item ID (e.g. nz047v45rrjo)" class="input-keywords" style="background:var(--surface-tertiary);border:1px solid var(--border-default);border-radius:var(--radius-input);color:var(--text-primary);font-size:14px;padding:var(--space-sm) 12px;">
+      <button class="btn-primary" id="item-lookup-btn">Lookup</button>
+    </div>
+    <div id="item-loading" class="loading" hidden><div class="spinner"></div><span>Loading...</span></div>
+    <div id="item-result"></div>
+  </section>
+
+  <!-- ═══ USER TAB ═══ -->
+  <section id="tab-user" hidden>
+    <div class="lookup">
+      <input type="text" id="user-id-input" placeholder="User ID (e.g. qjwy4weydwzo)" class="input-keywords" style="background:var(--surface-tertiary);border:1px solid var(--border-default);border-radius:var(--radius-input);color:var(--text-primary);font-size:14px;padding:var(--space-sm) 12px;">
+      <button class="btn-primary" id="user-lookup-btn">Lookup</button>
+    </div>
+    <div id="user-loading" class="loading" hidden><div class="spinner"></div><span>Loading...</span></div>
+    <div id="user-result"></div>
+  </section>
+
+  <!-- ═══ CATEGORIES TAB ═══ -->
+  <section id="tab-categories" hidden>
+    <button class="btn-primary" id="categories-load-btn" style="margin-bottom:var(--space-lg)">Load categories</button>
+    <div id="categories-loading" class="loading" hidden><div class="spinner"></div><span>Loading...</span></div>
+    <div id="categories-result"></div>
+  </section>
+
+</main>
+
+<script>
+const API = window.location.origin;
+
+// ── Tabs ────────────────────────────────────────────────
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+    tab.classList.add('active');
+    tab.setAttribute('aria-selected', 'true');
+    document.querySelectorAll('main > section').forEach(s => s.hidden = true);
+    document.getElementById('tab-' + tab.dataset.tab).hidden = false;
+  });
+});
+
+// ── Helpers ─────────────────────────────────────────────
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+function formatPrice(price) {
+  if (!price) return '?';
+  const amount = price.amount ?? price.cash?.amount ?? price;
+  const num = typeof amount === 'number' ? amount : 0;
+  return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(num);
+}
+
+async function api(path) {
+  const res = await fetch(API + path);
+  if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+  return res.json();
+}
+
+// ── Search ──────────────────────────────────────────────
+let nextPage = null;
+
+const searchForm = document.getElementById('search-form');
+const searchResults = document.getElementById('search-results');
+const searchLoading = document.getElementById('search-loading');
+const searchEmpty = document.getElementById('search-empty');
+const searchStatus = document.getElementById('search-status');
+const resultCount = document.getElementById('result-count');
+const loadMore = document.getElementById('load-more');
+const loadMoreBtn = document.getElementById('load-more-btn');
+
+searchForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  searchResults.innerHTML = '';
+  nextPage = null;
+  await doSearch();
+});
+
+loadMoreBtn.addEventListener('click', () => doSearch(true));
+
+async function doSearch(append = false) {
+  const fd = new FormData(searchForm);
+  let params = new URLSearchParams();
+
+  if (nextPage && append) {
+    params.set('next_page', nextPage);
+  } else {
+    for (const [k, v] of fd.entries()) {
+      if (v) params.set(k, v);
+    }
+  }
+
+  searchLoading.hidden = false;
+  searchEmpty.hidden = true;
+  loadMore.hidden = true;
+
+  try {
+    const data = await api('/api/v1/search?' + params);
+    const items = data?.data?.section?.payload?.items || [];
+    nextPage = data?.meta?.next_page || null;
+
+    if (!append) searchResults.innerHTML = '';
+
+    items.forEach(item => {
+      searchResults.insertAdjacentHTML('beforeend', renderSearchCard(item));
+    });
+
+    const total = searchResults.children.length;
+    resultCount.textContent = total;
+    searchStatus.hidden = total === 0;
+    searchEmpty.hidden = total > 0;
+    loadMore.hidden = !nextPage;
+  } catch (err) {
+    searchResults.innerHTML = `<div class="empty"><span>Error: ${esc(err.message)}</span></div>`;
+  } finally {
+    searchLoading.hidden = true;
+  }
+}
+
+function renderSearchCard(item) {
+  const img = item.images?.[0]?.urls?.medium || item.images?.[0]?.urls?.big || '';
+  const city = item.location?.city || '';
+  const shipping = item.shipping?.user_allows_shipping && item.shipping?.item_is_shippable;
+  const reserved = item.reserved?.flag;
+  const slug = item.web_slug ? `https://es.wallapop.com/item/${item.web_slug}` : '#';
+
+  return `
+    <a href="${esc(slug)}" target="_blank" rel="noopener" class="card" style="text-decoration:none;color:inherit">
+      ${img ? `<img src="${esc(img)}" alt="" width="300" height="200" loading="lazy">` : `<div style="height:200px;background:var(--surface-tertiary)"></div>`}
+      <div class="card-body">
+        <div class="card-title">${esc(item.title || '')}</div>
+        <div class="card-price">${formatPrice(item.price)}</div>
+        <div class="card-meta">
+          ${city ? `<span>${esc(city)}</span>` : ''}
+          ${shipping ? '<span class="badge badge-shipping">Shipping</span>' : ''}
+          ${reserved ? '<span class="badge badge-reserved">Reserved</span>' : ''}
+        </div>
+      </div>
+    </a>`;
+}
+
+// ── Item Lookup ─────────────────────────────────────────
+document.getElementById('item-lookup-btn').addEventListener('click', async () => {
+  const id = document.getElementById('item-id-input').value.trim();
+  if (!id) return;
+  const container = document.getElementById('item-result');
+  const loading = document.getElementById('item-loading');
+  container.innerHTML = '';
+  loading.hidden = false;
+
+  try {
+    const item = await api('/api/v1/items/' + encodeURIComponent(id));
+    const title = typeof item.title === 'object' ? item.title.original : item.title;
+    const desc = typeof item.description === 'object' ? item.description.original : item.description;
+    const price = item.price?.cash ? item.price.cash.amount / 100 : (item.price?.amount ?? 0);
+
+    container.innerHTML = `
+      <div class="panel">
+        <h2>${esc(title || id)}</h2>
+        <dl class="panel-grid">
+          <dt>ID</dt><dd>${esc(item.id)}</dd>
+          <dt>Price</dt><dd>${new Intl.NumberFormat('es-ES', { style:'currency', currency:'EUR' }).format(price)}</dd>
+          <dt>City</dt><dd>${esc(item.location?.city || 'Unknown')}</dd>
+          <dt>Seller</dt><dd>${esc(item.user?.micro_name || item.user?.id || 'Unknown')}</dd>
+          <dt>Shipping</dt><dd>${item.shipping?.user_allows_shipping ? 'Yes' : 'No'}</dd>
+          <dt>Reserved</dt><dd>${item.reserved?.flag ? 'Yes' : 'No'}</dd>
+          <dt>Sold</dt><dd>${item.sold?.flag ? 'Yes' : 'No'}</dd>
+          <dt>Created</dt><dd>${item.creation_date ? new Date(item.creation_date * 1000).toLocaleDateString() : '?'}</dd>
+        </dl>
+        ${desc ? `<p style="margin-top:var(--space-md);color:var(--text-secondary);font-size:13px">${esc(desc)}</p>` : ''}
+      </div>`;
+  } catch (err) {
+    container.innerHTML = `<div class="empty"><span>Error: ${esc(err.message)}</span></div>`;
+  } finally {
+    loading.hidden = true;
+  }
+});
+
+// ── User Lookup ─────────────────────────────────────────
+document.getElementById('user-lookup-btn').addEventListener('click', async () => {
+  const id = document.getElementById('user-id-input').value.trim();
+  if (!id) return;
+  const container = document.getElementById('user-result');
+  const loading = document.getElementById('user-loading');
+  container.innerHTML = '';
+  loading.hidden = false;
+
+  try {
+    const [user, stats] = await Promise.all([
+      api('/api/v1/users/' + encodeURIComponent(id)),
+      api('/api/v1/users/' + encodeURIComponent(id) + '/stats').catch(() => null),
+    ]);
+
+    const sold = stats?.counters?.find(c => c.type === 'sold')?.value ?? '?';
+    const reviews = stats?.counters?.find(c => c.type === 'reviews')?.value ?? '?';
+    const rating = stats?.ratings?.find(r => r.type === 'reviews')?.value;
+    const stars = rating != null ? (rating / 20).toFixed(1) : '?';
+
+    container.innerHTML = `
+      <div class="panel">
+        <h2>${esc(user.micro_name || id)}</h2>
+        <dl class="panel-grid">
+          <dt>ID</dt><dd>${esc(user.id)}</dd>
+          <dt>Type</dt><dd>${esc(user.type || 'normal')}</dd>
+          <dt>City</dt><dd>${esc(user.location?.city || 'Unknown')}</dd>
+          <dt>Registered</dt><dd>${user.register_date ? new Date(user.register_date).toLocaleDateString() : '?'}</dd>
+          <dt>Rating</dt><dd>${stars}/5</dd>
+          <dt>Sold</dt><dd>${sold}</dd>
+          <dt>Reviews</dt><dd>${reviews}</dd>
+          <dt>Featured</dt><dd>${user.featured ? 'Yes' : 'No'}</dd>
+        </dl>
+        ${user.extra_info?.description ? `<p style="margin-top:var(--space-md);color:var(--text-secondary);font-size:13px">${esc(user.extra_info.description)}</p>` : ''}
+      </div>`;
+  } catch (err) {
+    container.innerHTML = `<div class="empty"><span>Error: ${esc(err.message)}</span></div>`;
+  } finally {
+    loading.hidden = true;
+  }
+});
+
+// ── Categories ──────────────────────────────────────────
+document.getElementById('categories-load-btn').addEventListener('click', async () => {
+  const container = document.getElementById('categories-result');
+  const loading = document.getElementById('categories-loading');
+  container.innerHTML = '';
+  loading.hidden = false;
+
+  try {
+    const data = await api('/api/v1/categories');
+    container.innerHTML = renderCategories(data.categories || []);
+  } catch (err) {
+    container.innerHTML = `<div class="empty"><span>Error: ${esc(err.message)}</span></div>`;
+  } finally {
+    loading.hidden = true;
+  }
+});
+
+function renderCategories(cats, depth = 0) {
+  if (!cats.length) return '';
+  return `<ul style="list-style:none;padding-left:${depth ? 'var(--space-lg)' : '0'}">
+    ${cats.map(c => `
+      <li style="padding:var(--space-xs) 0">
+        <span style="color:var(--text-secondary);font-size:12px;font-family:var(--font-mono)">${c.id}</span>
+        <span style="font-size:14px;font-weight:${depth === 0 ? '600' : '400'};margin-left:var(--space-sm)">${esc(c.name)}</span>
+        ${c.subcategories?.length ? renderCategories(c.subcategories, depth + 1) : ''}
+      </li>
+    `).join('')}
+  </ul>`;
+}
+
+// ── Enter key for lookups ───────────────────────────────
+document.getElementById('item-id-input').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('item-lookup-btn').click(); });
+document.getElementById('user-id-input').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('user-lookup-btn').click(); });
+</script>
+
+</body>
+</html>
