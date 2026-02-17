@@ -1,0 +1,127 @@
+/* ═══════════════════════════════════════════════════════════
+ * @nexum/ui — Design Tokens (auto-generated, do not edit)
+ * Dark-mode-first · Framework-agnostic
+ * ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Surfaces ── */
+  --surface-primary: #09090b;
+  --surface-secondary: #141416;
+  --surface-tertiary: #1e1e21;
+  --surface-inverse: #fafafa;
+
+  /* ── Text ── */
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted: #52525b;
+  --text-inverse: #09090b;
+
+  /* ── Borders ── */
+  --border-default: rgba(255,255,255,0.12);
+  --border-subtle: rgba(255,255,255,0.08);
+  --border-strong: rgba(255,255,255,0.22);
+
+  /* ── Accent ── */
+  --accent: #6366f1;
+  --accent-hover: #818cf8;
+  --accent-text: #ffffff;
+
+  /* ── Status ── */
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+
+  /* ── Radius ── */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-card: 14px;
+  --radius-button: 10px;
+  --radius-input: 8px;
+  --radius-pill: 9999px;
+  --radius-container: 24px;
+
+  /* ── Shadows ── */
+  --shadow-card: 0px 1px 0px 0px rgba(255,255,255,0.10) inset, 0px 30px 50px rgba(0,0,0,0.40);
+  --shadow-subtle: 0 28px 70px rgba(0,0,0,0.14), 0 14px 32px rgba(0,0,0,0.08);
+  --shadow-glow: 0 0 40px 10px hsla(249, 91%, 77%, 0.1);
+
+  /* ── Spacing scale ── */
+  --space-0: 0px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-32: 128px;
+
+  /* ── Fonts ── */
+  --font-sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', monospace;
+}
+
+/* ── Light mode ── */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --surface-primary: #ffffff;
+    --surface-secondary: #f4f4f5;
+    --surface-tertiary: #e4e4e7;
+    --surface-inverse: #09090b;
+    --text-primary: #09090b;
+    --text-secondary: #52525b;
+    --text-muted: #a1a1aa;
+    --text-inverse: #fafafa;
+    --border-default: rgba(0,0,0,0.10);
+    --border-subtle: rgba(0,0,0,0.06);
+    --border-strong: rgba(0,0,0,0.20);
+    --accent: #6366f1;
+    --accent-hover: #4f46e5;
+    --success: #16a34a;
+    --warning: #d97706;
+    --danger: #dc2626;
+    --info: #2563eb;
+  }
+}
+
+/* ── Force dark ── */
+[data-theme="dark"] {
+  --surface-primary: #09090b;
+  --surface-secondary: #141416;
+  --surface-tertiary: #1e1e21;
+  --surface-inverse: #fafafa;
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted: #52525b;
+  --text-inverse: #09090b;
+  --border-default: rgba(255,255,255,0.12);
+  --border-subtle: rgba(255,255,255,0.08);
+  --border-strong: rgba(255,255,255,0.22);
+  --accent: #6366f1;
+  --accent-hover: #818cf8;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+}
+
+/* ── Base reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--surface-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--surface-tertiary); border-radius: var(--radius-pill); }
+::selection { background: rgba(99, 102, 241, 0.3); }

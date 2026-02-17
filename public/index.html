@@ -4,74 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wallapop API</title>
+  <link rel="stylesheet" href="/tokens.css">
   <style>
-    /* === Tokens === */
-    :root {
-      --surface-primary: #09090b;
-      --surface-secondary: #111113;
-      --surface-tertiary: #1a1a1c;
-      --text-primary: #fafafa;
-      --text-secondary: #a1a1aa;
-      --text-muted: #52525b;
-      --border-default: rgba(255,255,255,0.10);
-      --border-subtle: rgba(255,255,255,0.06);
-      --border-strong: rgba(255,255,255,0.20);
-      --accent: #6366f1;
-      --accent-hover: #818cf8;
-      --success: #22c55e;
-      --warning: #f59e0b;
-      --danger: #ef4444;
-      --info: #3b82f6;
-      --radius-card: 14px;
-      --radius-button: 10px;
-      --radius-input: 8px;
-      --radius-pill: 9999px;
-      --shadow-card: 0px 1px 0px 0px rgba(255,255,255,0.10) inset, 0px 30px 50px rgba(0,0,0,0.40);
-      --shadow-subtle: 0 28px 70px rgba(0,0,0,0.14), 0 14px 32px rgba(0,0,0,0.08);
-      --shadow-glow: 0 0 40px 10px hsla(249,91%,77%,0.1);
-      --space-xs: 4px;
-      --space-sm: 8px;
-      --space-md: 16px;
-      --space-lg: 24px;
-      --space-xl: 32px;
-      --space-2xl: 48px;
-      --space-3xl: 64px;
-      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-      --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', monospace;
-    }
-
-    @media (prefers-color-scheme: light) {
-      :root {
-        --surface-primary: #ffffff;
-        --surface-secondary: #f4f4f5;
-        --surface-tertiary: #e4e4e7;
-        --text-primary: #09090b;
-        --text-secondary: #52525b;
-        --text-muted: #a1a1aa;
-        --border-default: rgba(0,0,0,0.10);
-        --border-subtle: rgba(0,0,0,0.06);
-        --border-strong: rgba(0,0,0,0.20);
-        --shadow-card: 0px 1px 0px 0px rgba(0,0,0,0.05) inset, 0px 20px 40px rgba(0,0,0,0.08);
-        --shadow-subtle: 0 10px 30px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
-        --shadow-glow: 0 0 40px 10px hsla(249,91%,77%,0.08);
-      }
-    }
-
-    /* === Resets === */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      background: var(--surface-primary);
-      color: var(--text-primary);
-      font-family: var(--font-sans);
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-    }
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: var(--surface-primary); }
-    ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: var(--radius-pill); }
-
     /* === Layout === */
-    .page { max-width: 1120px; margin: 0 auto; padding: var(--space-lg); }
+    .page { max-width: 1120px; margin: 0 auto; padding: var(--space-6); }
 
     /* === Nav === */
     nav {
@@ -79,8 +15,8 @@
       background: rgba(9,9,11,0.85);
       backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border-subtle);
-      padding: var(--space-md) var(--space-lg);
-      display: flex; align-items: center; gap: var(--space-md);
+      padding: var(--space-4) var(--space-6);
+      display: flex; align-items: center; gap: var(--space-4);
     }
     @media (prefers-color-scheme: light) {
       nav { background: rgba(255,255,255,0.85); }
@@ -97,12 +33,12 @@
       background: var(--surface-secondary);
       border-radius: var(--radius-card);
       box-shadow: var(--shadow-card);
-      padding: var(--space-lg);
-      display: flex; flex-direction: column; gap: var(--space-md);
-      margin-bottom: var(--space-xl);
+      padding: var(--space-6);
+      display: flex; flex-direction: column; gap: var(--space-4);
+      margin-bottom: var(--space-8);
     }
     .search-row {
-      display: flex; gap: var(--space-sm); flex-wrap: wrap;
+      display: flex; gap: var(--space-2); flex-wrap: wrap;
     }
     .search-row input, .search-row select {
       background: var(--surface-tertiary);
@@ -111,7 +47,7 @@
       color: var(--text-primary);
       font-family: var(--font-sans);
       font-size: 14px;
-      padding: var(--space-sm) 12px;
+      padding: var(--space-2) 12px;
       outline: none;
       transition: border-color 0.15s;
     }
@@ -128,7 +64,7 @@
       font-family: var(--font-sans);
       font-size: 14px; font-weight: 600;
       cursor: pointer; border: none;
-      padding: var(--space-sm) var(--space-md);
+      padding: var(--space-2) var(--space-4);
       border-radius: var(--radius-button);
       transition: background 0.15s, box-shadow 0.15s;
     }
@@ -145,14 +81,14 @@
 
     /* === Tabs === */
     .tabs {
-      display: flex; gap: var(--space-xs);
+      display: flex; gap: var(--space-1);
       border-bottom: 1px solid var(--border-subtle);
-      margin-bottom: var(--space-lg);
+      margin-bottom: var(--space-6);
       overflow-x: auto;
     }
     .tab {
       background: none; color: var(--text-secondary);
-      padding: var(--space-sm) var(--space-md);
+      padding: var(--space-2) var(--space-4);
       border-radius: var(--radius-button) var(--radius-button) 0 0;
       border: none; border-bottom: 2px solid transparent;
       white-space: nowrap;
@@ -161,7 +97,7 @@
     .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
     /* === Results grid === */
-    .results { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-lg); }
+    .results { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-6); }
 
     /* === Item card === */
     .card {
@@ -176,14 +112,14 @@
       width: 100%; height: 200px; object-fit: cover;
       background: var(--surface-tertiary);
     }
-    .card-body { padding: var(--space-md); display: flex; flex-direction: column; gap: var(--space-sm); }
+    .card-body { padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-2); }
     .card-title {
       font-size: 14px; font-weight: 600;
       display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
     }
     .card-price { font-size: 18px; font-weight: 700; color: var(--accent); }
-    .card-meta { font-size: 12px; color: var(--text-muted); display: flex; gap: var(--space-sm); flex-wrap: wrap; }
-    .card-meta span { display: flex; align-items: center; gap: var(--space-xs); }
+    .card-meta { font-size: 12px; color: var(--text-muted); display: flex; gap: var(--space-2); flex-wrap: wrap; }
+    .card-meta span { display: flex; align-items: center; gap: var(--space-1); }
 
     /* === Badges === */
     .badge {
@@ -196,8 +132,8 @@
     /* === Status bar === */
     .status-bar {
       display: flex; align-items: center; justify-content: space-between;
-      padding: var(--space-sm) 0;
-      margin-bottom: var(--space-md);
+      padding: var(--space-2) 0;
+      margin-bottom: var(--space-4);
       color: var(--text-secondary); font-size: 13px;
     }
     .status-bar .count { font-weight: 600; color: var(--text-primary); }
@@ -205,7 +141,7 @@
     /* === Load more === */
     .load-more {
       display: flex; justify-content: center;
-      padding: var(--space-xl) 0;
+      padding: var(--space-8) 0;
     }
 
     /* === Panels (item detail, user) === */
@@ -213,17 +149,17 @@
       background: var(--surface-secondary);
       border-radius: var(--radius-card);
       box-shadow: var(--shadow-card);
-      padding: var(--space-lg);
-      margin-bottom: var(--space-lg);
+      padding: var(--space-6);
+      margin-bottom: var(--space-6);
     }
-    .panel h2 { font-size: 20px; font-weight: 700; margin-bottom: var(--space-md); }
-    .panel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm); }
+    .panel h2 { font-size: 20px; font-weight: 700; margin-bottom: var(--space-4); }
+    .panel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
     .panel-grid dt { font-size: 12px; color: var(--text-muted); }
-    .panel-grid dd { font-size: 14px; font-weight: 500; margin-bottom: var(--space-sm); }
+    .panel-grid dd { font-size: 14px; font-weight: 500; margin-bottom: var(--space-2); }
 
     /* === Lookup form === */
     .lookup {
-      display: flex; gap: var(--space-sm); margin-bottom: var(--space-lg);
+      display: flex; gap: var(--space-2); margin-bottom: var(--space-6);
     }
     .lookup input { flex: 1; }
 
@@ -238,7 +174,7 @@
     @keyframes spin { to { transform: rotate(360deg); } }
     .loading, .empty {
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: var(--space-md); padding: var(--space-3xl) 0;
+      gap: var(--space-4); padding: var(--space-16) 0;
       color: var(--text-muted); font-size: 14px;
     }
 
@@ -316,7 +252,7 @@
   <!-- ═══ ITEM TAB ═══ -->
   <section id="tab-item" hidden>
     <div class="lookup">
-      <input type="text" id="item-id-input" placeholder="Item ID (e.g. nz047v45rrjo)" class="input-keywords" style="background:var(--surface-tertiary);border:1px solid var(--border-default);border-radius:var(--radius-input);color:var(--text-primary);font-size:14px;padding:var(--space-sm) 12px;">
+      <input type="text" id="item-id-input" placeholder="Item ID (e.g. nz047v45rrjo)" class="input-keywords" style="background:var(--surface-tertiary);border:1px solid var(--border-default);border-radius:var(--radius-input);color:var(--text-primary);font-size:14px;padding:var(--space-2) 12px;">
       <button class="btn-primary" id="item-lookup-btn">Lookup</button>
     </div>
     <div id="item-loading" class="loading" hidden><div class="spinner"></div><span>Loading...</span></div>
@@ -326,7 +262,7 @@
   <!-- ═══ USER TAB ═══ -->
   <section id="tab-user" hidden>
     <div class="lookup">
-      <input type="text" id="user-id-input" placeholder="User ID (e.g. qjwy4weydwzo)" class="input-keywords" style="background:var(--surface-tertiary);border:1px solid var(--border-default);border-radius:var(--radius-input);color:var(--text-primary);font-size:14px;padding:var(--space-sm) 12px;">
+      <input type="text" id="user-id-input" placeholder="User ID (e.g. qjwy4weydwzo)" class="input-keywords" style="background:var(--surface-tertiary);border:1px solid var(--border-default);border-radius:var(--radius-input);color:var(--text-primary);font-size:14px;padding:var(--space-2) 12px;">
       <button class="btn-primary" id="user-lookup-btn">Lookup</button>
     </div>
     <div id="user-loading" class="loading" hidden><div class="spinner"></div><span>Loading...</span></div>
@@ -335,7 +271,7 @@
 
   <!-- ═══ CATEGORIES TAB ═══ -->
   <section id="tab-categories" hidden>
-    <button class="btn-primary" id="categories-load-btn" style="margin-bottom:var(--space-lg)">Load categories</button>
+    <button class="btn-primary" id="categories-load-btn" style="margin-bottom:var(--space-6)">Load categories</button>
     <div id="categories-loading" class="loading" hidden><div class="spinner"></div><span>Loading...</span></div>
     <div id="categories-result"></div>
   </section>
@@ -482,7 +418,7 @@ document.getElementById('item-lookup-btn').addEventListener('click', async () =>
           <dt>Sold</dt><dd>${item.sold?.flag ? 'Yes' : 'No'}</dd>
           <dt>Created</dt><dd>${item.creation_date ? new Date(item.creation_date * 1000).toLocaleDateString() : '?'}</dd>
         </dl>
-        ${desc ? `<p style="margin-top:var(--space-md);color:var(--text-secondary);font-size:13px">${esc(desc)}</p>` : ''}
+        ${desc ? `<p style="margin-top:var(--space-4);color:var(--text-secondary);font-size:13px">${esc(desc)}</p>` : ''}
       </div>`;
   } catch (err) {
     container.innerHTML = `<div class="empty"><span>Error: ${esc(err.message)}</span></div>`;
@@ -524,7 +460,7 @@ document.getElementById('user-lookup-btn').addEventListener('click', async () =>
           <dt>Reviews</dt><dd>${reviews}</dd>
           <dt>Featured</dt><dd>${user.featured ? 'Yes' : 'No'}</dd>
         </dl>
-        ${user.extra_info?.description ? `<p style="margin-top:var(--space-md);color:var(--text-secondary);font-size:13px">${esc(user.extra_info.description)}</p>` : ''}
+        ${user.extra_info?.description ? `<p style="margin-top:var(--space-4);color:var(--text-secondary);font-size:13px">${esc(user.extra_info.description)}</p>` : ''}
       </div>`;
   } catch (err) {
     container.innerHTML = `<div class="empty"><span>Error: ${esc(err.message)}</span></div>`;
@@ -552,11 +488,11 @@ document.getElementById('categories-load-btn').addEventListener('click', async (
 
 function renderCategories(cats, depth = 0) {
   if (!cats.length) return '';
-  return `<ul style="list-style:none;padding-left:${depth ? 'var(--space-lg)' : '0'}">
+  return `<ul style="list-style:none;padding-left:${depth ? 'var(--space-6)' : '0'}">
     ${cats.map(c => `
-      <li style="padding:var(--space-xs) 0">
+      <li style="padding:var(--space-1) 0">
         <span style="color:var(--text-secondary);font-size:12px;font-family:var(--font-mono)">${c.id}</span>
-        <span style="font-size:14px;font-weight:${depth === 0 ? '600' : '400'};margin-left:var(--space-sm)">${esc(c.name)}</span>
+        <span style="font-size:14px;font-weight:${depth === 0 ? '600' : '400'};margin-left:var(--space-2)">${esc(c.name)}</span>
         ${c.subcategories?.length ? renderCategories(c.subcategories, depth + 1) : ''}
       </li>
     `).join('')}

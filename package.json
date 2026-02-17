@@ -6,7 +6,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "build": "tsc",
+    "build": "tsc && cp node_modules/@nexum/ui/dist/tokens.css public/tokens.css",
+    "postinstall": "cp node_modules/@nexum/ui/dist/tokens.css public/tokens.css 2>/dev/null || true",
     "dev": "tsx src/server.ts",
     "start": "node dist/server.js",
     "cli": "tsx src/cli.ts"
@@ -16,6 +17,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@nexum/ui": "file:../nexum-ui",
     "axios": "^1.13.5",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
