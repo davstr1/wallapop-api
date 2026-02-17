@@ -6,6 +6,7 @@ import {
   curlUserItems, curlCategories, curlInbox, curlExtractItemId,
 } from './curl';
 import { generateCurlMd } from './curl-md';
+import { filterContinentalSpain } from './filters';
 
 const USAGE = `
 Usage: wallapop <command> [options]
@@ -33,6 +34,7 @@ Search options:
   --order <order>            newest|price_low_to_high|price_high_to_low|distance
   --limit <n>                Results per page (max 40)
   --next-page <token>        Pagination token
+  --continental              Filter to continental Spain only (excludes Canarias, Baleares, Ceuta, Melilla)
 
 General:
   --curl                     Print the curl command instead of executing
@@ -192,6 +194,12 @@ async function main() {
           limit: flags.limit ? Number(flags.limit) : undefined,
           next_page: flags['next-page'],
         });
+
+        // Post-filter: continental Spain only
+        if (flags.continental === 'true' && data?.data?.section?.payload?.items) {
+          data.data.section.payload.items = filterContinentalSpain(data.data.section.payload.items);
+        }
+
         output(data, raw);
         break;
       }

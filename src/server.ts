@@ -4,6 +4,7 @@ import cors from 'cors';
 import { WallapopClient } from './client';
 import { config } from './config';
 import { SearchParams } from './types';
+import { filterContinentalSpain } from './filters';
 
 export function createApp(client?: WallapopClient) {
   const app = express();
@@ -43,6 +44,12 @@ export function createApp(client?: WallapopClient) {
       }
 
       const data = await wallapop.search(params);
+
+      // Post-filter: continental Spain only if requested
+      if (req.query.continental === 'true' && data?.data?.section?.payload?.items) {
+        data.data.section.payload.items = filterContinentalSpain(data.data.section.payload.items);
+      }
+
       res.json(data);
     } catch (err) {
       next(err);

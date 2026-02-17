@@ -226,6 +226,10 @@
           <option value="price_high_to_low">Price: high to low</option>
           <option value="distance">Distance</option>
         </select>
+        <label style="display:flex;align-items:center;gap:var(--space-2);font-size:13px;color:var(--text-secondary);cursor:pointer;white-space:nowrap">
+          <input type="checkbox" name="continental" checked style="accent-color:var(--accent)">
+          Continental Spain
+        </label>
       </div>
     </form>
 
@@ -337,6 +341,7 @@ async function doSearch(append = false) {
     params.set('next_page', nextPage);
   } else {
     for (const [k, v] of fd.entries()) {
+      if (k === 'continental') { params.set(k, 'true'); continue; }
       if (v) params.set(k, v);
     }
   }
