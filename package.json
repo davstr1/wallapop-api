@@ -15,6 +15,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "bin": {
+    "oc-wallapop": "dist/cli.js"
+  },
   "description": "",
   "dependencies": {
     "@nexum/ui": "file:../nexum-ui",
